@@ -1,0 +1,20 @@
+language: java
+
+#services:
+#  - docker
+#
+#before_install:
+#  - docker build -t queen21/demo .
+#  - docker run -p 8080:8080 queen21/demo
+
+install: "-./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V"
+script: "-jdk_switcher use openjdk11 -export JAVA_HOME=$HOME/openjdk11 - $TRAVIS_BUILD_DIR/install-jdk.sh
+  --install openjdk11 --target $JAVA_HOME -./mvnw test -B"
+deploy:
+  provider: heroku
+  api_key: $HEROKU_API_KEY
+  app:
+    master: demo123-staging
+    production: demo123-prod
+  on: master
+jdk: "-openjdk11"
