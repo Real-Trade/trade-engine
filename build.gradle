@@ -8,16 +8,77 @@ group = 'com.realtrade'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+// tag::configurations[]
+configurations {
+	jaxb
+}
+// end::configurations[]
+
 repositories {
 	mavenCentral()
 }
 
+// tag::wsdl[]
+task genJaxb {
+	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+	ext.classesDir = "${buildDir}/classes/jaxb"
+	ext.schema = "https://soap-producer-demo.herokuapp.com/soapWS/orders.wsdl"
+
+	outputs.dir sourcesDir
+
+	doLast() {
+		project.ant {
+			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+					classpath: configurations.jaxb.asPath
+			mkdir(dir: sourcesDir)
+			mkdir(dir: classesDir)
+
+			xjc(destdir: sourcesDir, schema: schema,
+					package: "com.realtrade.tradeengine.wsdl") {
+				arg(value: "-wsdl")
+				produces(dir: sourcesDir, includes: "**/*.java")
+			}
+
+			javac(destdir: classesDir, source: 11, target: 11, debug: true,
+					debugLevel: "lines,vars,source",
+					classpath: configurations.jaxb.asPath) {
+				src(path: sourcesDir)
+				include(name: "**/*.java")
+				include(name: "*.java")
+			}
+
+			copy(todir: classesDir) {
+				fileset(dir: sourcesDir, erroronmissingdir: false) {
+					exclude(name: "**/*.java")
+				}
+			}
+		}
+	}
+}
+// end::wsdl[]
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	implementation ('org.springframework.boot:spring-boot-starter-web-services') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
+	implementation 'org.springframework.ws:spring-ws-core'
+// For Java 11:
+	implementation 'org.glassfish.jaxb:jaxb-runtime'
+	compile(files(genJaxb.classesDir).builtBy(genJaxb))
+
+	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
 }
 
 test {
 	useJUnitPlatform()
+}
+
+bootJar {
+	archivesBaseName = 'trade-engine'
+	archiveVersion =  '0.0.1'
 }
