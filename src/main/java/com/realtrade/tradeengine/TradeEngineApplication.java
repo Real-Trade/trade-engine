@@ -1,6 +1,6 @@
 package com.realtrade.tradeengine;
 
-import com.realtrade.tradeengine.service.OrderClient;
+import com.realtrade.tradeengine.endpoint.OrderClient;
 import com.realtrade.tradeengine.wsdl.GetOrderResponse;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

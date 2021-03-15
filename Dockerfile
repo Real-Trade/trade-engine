@@ -1,5 +1,5 @@
 FROM openjdk:11
-COPY build/libs/*.jar trade-engine.jar
+COPY build/libs/*.jar tradeengine.jar
 VOLUME /tmp
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","trade-engine.jar"]
+ENTRYPOINT ["java","-jar","tradeengine.jar"]

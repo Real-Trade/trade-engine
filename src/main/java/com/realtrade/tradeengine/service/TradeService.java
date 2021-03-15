@@ -1,6 +1,6 @@
 package com.realtrade.tradeengine.service;
 
-import com.realtrade.tradeengine.trade.Trade;
+import com.realtrade.tradeengine.model.Trade;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.realtrade.tradeengine.service;
+package com.realtrade.tradeengine.endpoint;
 
 import com.realtrade.tradeengine.wsdl.GetOrderRequest;
 import com.realtrade.tradeengine.wsdl.GetOrderResponse;

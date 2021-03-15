@@ -1,0 +1,10 @@
+<soapenv:Envelope
+        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:ts="http://realtreade/tradeengine">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <ts:getTradeRequest>
+            <ts:tradeId>1L</ts:tradeId>
+        </ts:getTradeRequest>
+    </soapenv:Body>
+</soapenv:Envelope>

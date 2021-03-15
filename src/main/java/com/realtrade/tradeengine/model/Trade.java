@@ -1,4 +1,4 @@
-package com.realtrade.tradeengine.trade;
+package com.realtrade.tradeengine.model;
 
 public class Trade {
     private Long id;
