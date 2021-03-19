@@ -1,12 +1,18 @@
 package com.realtrade.tradeengine.models;
 
+import com.realtrade.tradeengine.dto.OrderDto;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 
+@Component
 public class Exchange {
     private String name;
     private List<String> tickerList;
     private MallonExchange exchange;
-    private List<Order> orderBook;
+    private List<OrderDto> orderDtoBook;
+
+    public Exchange() {}
 
     public Exchange(String name, MallonExchange exchange, List<String> tickerList) {
         this.name = name;
@@ -35,12 +41,12 @@ public class Exchange {
         return exchange;
     }
 
-    public List<Order> getOrderBook() {
-        return orderBook;
+    public List<OrderDto> getOrderBook() {
+        return orderDtoBook;
     }
 
-    public void setOrderBook(List<Order> orderBook) {
-        this.orderBook = orderBook;
+    public void setOrderBook(List<OrderDto> orderDtoBook) {
+        this.orderDtoBook = orderDtoBook;
     }
 
 }

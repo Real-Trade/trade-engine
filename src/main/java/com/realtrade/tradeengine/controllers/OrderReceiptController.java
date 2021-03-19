@@ -1,6 +1,6 @@
 package com.realtrade.tradeengine.controllers;
 
-import com.realtrade.tradeengine.models.Order;
+import com.realtrade.tradeengine.dto.OrderDto;
 import com.realtrade.tradeengine.services.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +23,11 @@ public class OrderReceiptController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public Order createOrder (@RequestBody Order order) {
+    public OrderDto submitOrder (@RequestBody OrderDto orderDto) {
         //validate object
         //create in db
-        log.info(order.toString());
-        return order;
+        log.info(orderDto.toString());
+        return orderDto;
     }
 
     @GetMapping
@@ -36,17 +36,17 @@ public class OrderReceiptController {
     }
 
     @GetMapping(path = "{orderId}")
-    public String getOrderById(@PathVariable("orderId") Long orderId) {
+    public String getOrderById(@PathVariable("orderId") int orderId) {
         return "Order" + orderId;
     }
 
-    @PutMapping(path = "{orderId")
-    public String updateOrder(@PathVariable(name = "orderId") Long orderId, @RequestBody String orderUpdate) {
-        return "Updated Order : " + orderId + " " + orderUpdate;
+    @PutMapping(path = "/{orderId/update")
+    public String updateOrder(@PathVariable(name = "orderId") int orderId, @RequestBody OrderDto orderUpdate) {
+        return "Updated Order : " + orderId + " " + orderUpdate.toString();
     }
 
-    @DeleteMapping
-    public boolean deleteOrder(@RequestParam(name = "orderId") String orderId) {
+    @DeleteMapping(path = "/{orderId}/cancel")
+    public boolean cancelOrder(@PathVariable(name = "orderId") int orderId) {
         return true;
     }
 

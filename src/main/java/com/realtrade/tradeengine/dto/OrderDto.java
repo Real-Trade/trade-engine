@@ -1,40 +1,52 @@
-package com.realtrade.tradeengine.models;
+package com.realtrade.tradeengine.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.realtrade.tradeengine.models.Order;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-
-//implements cloneable to facilitate suborder creation
 @Entity
-@Table(name = "clientOrder")
-public class Order implements Cloneable{
+@Table(name = "client_order")
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class OrderDto{
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long orderId;
-    private Side side;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty(value = "orderId")
+    private int orderId;
+    @JsonProperty(value = "side")
+    private String side;
+    @JsonProperty(value = "quantity")
     private int quantity;
+    @JsonProperty(value = "price")
     private double price;
-    private Long clientId;
-    private Long portfolioId;
-    private Status status;
-    private Product product;
-    private String exchangeName;
+    @JsonProperty(value = "clientId")
+    private int clientId;
+    @JsonProperty(value = "portfolioId")
+    private int portfolioId;
+    @JsonProperty(value = "status")
+    private String status;
+    @JsonProperty(value = "product")
+    private String product;
+    @JsonProperty(value = "exchangeOrderId")
+    private String exchangeOrderId;
+    @JsonProperty(value = "createdAt")
     private LocalDate createdAt;
+    @JsonProperty(value = "updatedAt")
     private LocalDate updatedAt;
-    private LocalDate deletedAt;
 
-    public Order() {
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
+    public OrderDto() {
+
     }
 
-    public Order(Long orderId,
-                 Side side,
-                 int quantity,
-                 double price,
-                 Long clientId,
-                 Long portfolioId,
-                 Status status,
-                 Product product) {
+    public OrderDto(int orderId,
+                    String side,
+                    int quantity,
+                    double price,
+                    int clientId,
+                    int portfolioId,
+                    String status,
+                    String product, String exchangeOrderId) {
         this.orderId = orderId;
         this.side = side;
         this.quantity = quantity;
@@ -43,17 +55,16 @@ public class Order implements Cloneable{
         this.portfolioId = portfolioId;
         this.status = status;
         this.product = product;
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
+        this.exchangeOrderId = exchangeOrderId;
     }
 
-    public Order(Side side,
-                 int quantity,
-                 double price,
-                 Long clientId,
-                 Long portfolioId,
-                 Status status,
-                 Product product) {
+    public OrderDto(String side,
+                    int quantity,
+                    double price,
+                    int clientId,
+                    int portfolioId,
+                    String status,
+                    String product, String exchangeOrderId) {
         this.side = side;
         this.quantity = quantity;
         this.price = price;
@@ -61,39 +72,38 @@ public class Order implements Cloneable{
         this.portfolioId = portfolioId;
         this.status = status;
         this.product = product;
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
+        this.exchangeOrderId = exchangeOrderId;
     }
 
-    public Product getProduct() {
+    public String getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(String product) {
         this.product = product;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public void setClientId(Long clientId) {
+    public void setClientId(int clientId) {
         this.clientId = clientId;
     }
 
-    public void setPortfolioId(Long portfolioId) {
+    public void setPortfolioId(int portfolioId) {
         this.portfolioId = portfolioId;
     }
 
-    public Long getPortfolioId() {
+    public int getPortfolioId() {
         return portfolioId;
     }
 
-    public Long getClientId() {
+    public int getClientId() {
         return clientId;
     }
 
@@ -113,19 +123,19 @@ public class Order implements Cloneable{
         this.quantity = quantity;
     }
 
-    public Side getSide() {
+    public String getSide() {
         return side;
     }
 
-    public void setSide(Side side) {
+    public void setSide(String side) {
         this.side = side;
     }
 
-    public Long getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(int orderId) {
         this.orderId = orderId;
     }
 
@@ -143,14 +153,6 @@ public class Order implements Cloneable{
                 '}';
     }
 
-    public LocalDate getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDate deletedAt) {
-        this.deletedAt = deletedAt;
-    }
-
     public LocalDate getCreatedAt() {
         return createdAt;
     }
@@ -165,5 +167,18 @@ public class Order implements Cloneable{
 
     public void setUpdatedAt(LocalDate updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getExchangeOrderId() {
+        return exchangeOrderId;
+    }
+
+    public void setExchangeOrderId(String exchangeOrderId) {
+        this.exchangeOrderId = exchangeOrderId;
+    }
+
+    public Order getLocalRepresentation() {
+        Order order = new Order();
+        return order;
     }
 }
