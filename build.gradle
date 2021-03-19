@@ -8,77 +8,9 @@ group = 'com.realtrade'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-// tag::configurations[]
-configurations {
-	jaxb
-}
-// end::configurations[]
-
 repositories {
 	mavenCentral()
 }
-
-// tag::wsdl[]
-task genJaxbConsumer {
-	ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
-	ext.classesDir = "${buildDir}/classes/jaxb"
-
-	ext.schema = "https://soap-producer-demo.herokuapp.com/soapWS/orders.wsdl"
-
-	outputs.dir sourcesDir
-
-	doLast() {
-		project.ant {
-			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
-					classpath: configurations.jaxb.asPath
-			mkdir(dir: sourcesDir)
-			mkdir(dir: classesDir)
-
-			xjc(destdir: sourcesDir, schema: schema,
-					package: "com.realtrade.tradeengine.wsdl") {
-				arg(value: "-wsdl")
-				produces(dir: sourcesDir, includes: "**/*.java")
-			}
-
-			javac(destdir: classesDir, source: 11, target: 11, debug: true,
-					debugLevel: "lines,vars,source",
-					classpath: configurations.jaxb.asPath) {
-				src(path: sourcesDir)
-				include(name: "**/*.java")
-				include(name: "*.java")
-			}
-
-			copy(todir: classesDir) {
-				fileset(dir: sourcesDir, erroronmissingdir: false) {
-					exclude(name: "**/*.java")
-				}
-			}
-		}
-	}
-}
-// end::wsdl[]
-
-task genJaxbProducer {
-	ext.sourcesDir = "src/main/java"
-	ext.schema = "src/main/resources/trades.xsd"
-
-	outputs.dir sourcesDir
-
-	doLast() {
-		project.ant {
-			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
-					classpath: configurations.jaxb.asPath
-			mkdir(dir: sourcesDir)
-
-			xjc(destdir: sourcesDir, schema: schema) {
-				arg(value: "-wsdl")
-				produces(dir: sourcesDir, includes: "**/*.java")
-			}
-		}
-	}
-}
-
-compileJava.dependsOn genJaxbProducer
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
@@ -87,20 +19,12 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	implementation ('org.springframework.boot:spring-boot-starter-web-services')
-	implementation 'org.springframework.ws:spring-ws-core'
-	implementation 'wsdl4j:wsdl4j'
-// For Java 11:
-	implementation 'org.glassfish.jaxb:jaxb-runtime'
-	compile(files(genJaxbConsumer.classesDir).builtBy(genJaxbConsumer))
-
-	jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
+	//db deps
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+	implementation('org.postgresql:postgresql')
 }
 
 test {
 	useJUnitPlatform()
 }
 
-bootJar {
-	archivesBaseName = 'trade-engine'
-	archiveVersion =  '0.0.1'
-}
