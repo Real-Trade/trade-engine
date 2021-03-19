@@ -3,32 +3,38 @@ package com.realtrade.tradeengine.models;
 import javax.persistence.*;
 import java.time.LocalDate;
 
+//implements cloneable to facilitate suborder creation
+@Entity
+@Table(name = "clientOrder")
 public class Order implements Cloneable{
 
-    private int orderId;
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long orderId;
     private Side side;
     private int quantity;
     private double price;
-    private int clientId;
-    private int portfolioId;
+    private Long clientId;
+    private Long portfolioId;
     private Status status;
     private Product product;
     private String exchangeName;
     private LocalDate createdAt;
     private LocalDate updatedAt;
+    private LocalDate deletedAt;
 
     public Order() {
-
+        this.createdAt = LocalDate.now();
+        this.updatedAt = LocalDate.now();
     }
 
-    public Order(int orderId,
-                    Side side,
-                    int quantity,
-                    double price,
-                    int clientId,
-                    int portfolioId,
-                    Status status,
-                    Product product) {
+    public Order(Long orderId,
+                 Side side,
+                 int quantity,
+                 double price,
+                 Long clientId,
+                 Long portfolioId,
+                 Status status,
+                 Product product) {
         this.orderId = orderId;
         this.side = side;
         this.quantity = quantity;
@@ -42,12 +48,12 @@ public class Order implements Cloneable{
     }
 
     public Order(Side side,
-                    int quantity,
-                    double price,
-                    int clientId,
-                    int portfolioId,
-                    Status status,
-                    Product product) {
+                 int quantity,
+                 double price,
+                 Long clientId,
+                 Long portfolioId,
+                 Status status,
+                 Product product) {
         this.side = side;
         this.quantity = quantity;
         this.price = price;
@@ -55,6 +61,8 @@ public class Order implements Cloneable{
         this.portfolioId = portfolioId;
         this.status = status;
         this.product = product;
+        this.createdAt = LocalDate.now();
+        this.updatedAt = LocalDate.now();
     }
 
     public Product getProduct() {
@@ -73,19 +81,19 @@ public class Order implements Cloneable{
         this.status = status;
     }
 
-    public void setClientId(int clientId) {
+    public void setClientId(Long clientId) {
         this.clientId = clientId;
     }
 
-    public void setPortfolioId(int portfolioId) {
+    public void setPortfolioId(Long portfolioId) {
         this.portfolioId = portfolioId;
     }
 
-    public int getPortfolioId() {
+    public Long getPortfolioId() {
         return portfolioId;
     }
 
-    public int getClientId() {
+    public Long getClientId() {
         return clientId;
     }
 
@@ -113,11 +121,11 @@ public class Order implements Cloneable{
         this.side = side;
     }
 
-    public int getOrderId() {
+    public Long getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(int orderId) {
+    public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
 
@@ -133,6 +141,14 @@ public class Order implements Cloneable{
                 ", status=" + status +
                 ", product=" + product +
                 '}';
+    }
+
+    public LocalDate getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDate deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     public LocalDate getCreatedAt() {
