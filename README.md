@@ -15,6 +15,6 @@ e.g. order
                           METHOD            PATH
 CREATE NEW ORDER          POST              /
 
-UPDATE ORDER              PUT               /{orderId}
+UPDATE ORDER              PUT               /{orderId}/update
 
-CANCEL ORDER              DELETE            /{orderId}
+CANCEL ORDER              DELETE            /{orderId}/cancel
