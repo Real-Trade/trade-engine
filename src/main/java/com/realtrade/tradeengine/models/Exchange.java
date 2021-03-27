@@ -1,22 +1,28 @@
 package com.realtrade.tradeengine.models;
 
-import com.realtrade.tradeengine.dto.OrderDto;
+import com.realtrade.tradeengine.dto.MarketDataDto;
+import com.realtrade.tradeengine.dto.ExchangeOrderDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class Exchange {
     private String name;
+    private String url;
     private List<String> tickerList;
     private MallonExchange exchange;
-    private List<OrderDto> orderDtoBook;
+    private Map<String, List<ExchangeOrderDto>> orderBooks;
+    private List<MarketDataDto> currentMarketState;
 
     public Exchange() {}
 
-    public Exchange(String name, MallonExchange exchange, List<String> tickerList) {
+    public Exchange(String name, MallonExchange exchange, String url,
+                    List<String> tickerList) {
         this.name = name;
         this.exchange = exchange;
+        this.url = url;
         this.tickerList = tickerList;
     }
 
@@ -41,13 +47,32 @@ public class Exchange {
         return exchange;
     }
 
-    public List<OrderDto> getOrderBook() {
-        return orderDtoBook;
+    public Map<String, List<ExchangeOrderDto>> getOrderBooks() {
+        return orderBooks;
     }
 
-    public void setOrderBook(List<OrderDto> orderDtoBook) {
-        this.orderDtoBook = orderDtoBook;
+    public void setOrderBooks(Map<String, List<ExchangeOrderDto>> orderBooks) {
+        this.orderBooks = orderBooks;
+    }
+    
+    public List<ExchangeOrderDto> getOrderBookByTicker(String ticker) {
+        return orderBooks.get(ticker);
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public List<MarketDataDto> getCurrentMarketState() {
+        return currentMarketState;
+    }
+
+    public void setCurrentMarketState(List<MarketDataDto> currentMarketState) {
+        this.currentMarketState = currentMarketState;
+    }
 }
 

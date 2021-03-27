@@ -1,8 +1,15 @@
 package com.realtrade.tradeengine.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.realtrade.tradeengine.controllers.OrderReceiptController;
 import com.realtrade.tradeengine.models.Order;
+import com.realtrade.tradeengine.models.Product;
+import com.realtrade.tradeengine.models.Side;
+import com.realtrade.tradeengine.models.Status;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -10,6 +17,7 @@ import java.time.LocalDate;
 @Table(name = "client_order")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderDto{
+    private  static final Logger log = LoggerFactory.getLogger(OrderReceiptController.class);
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(value = "orderId")
@@ -141,7 +149,7 @@ public class OrderDto{
 
     @Override
     public String toString() {
-        return "Order{" +
+        return "OrderDto{" +
                 "orderId=" + orderId +
                 ", side=" + side +
                 ", quantity=" + quantity +
@@ -178,7 +186,12 @@ public class OrderDto{
     }
 
     public Order getLocalRepresentation() {
-        Order order = new Order();
-        return order;
+        log.debug(this.side);
+        return new Order(Side.valueOf(this.side), this.quantity, this.price, this.clientId, this.portfolioId, Status.valueOf(this.status), Product.valueOf(this.product));
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

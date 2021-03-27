@@ -1,6 +1,5 @@
 package com.realtrade.tradeengine.models;
 
-import javax.persistence.*;
 import java.time.LocalDate;
 
 public class Order implements Cloneable{
@@ -37,8 +36,6 @@ public class Order implements Cloneable{
         this.portfolioId = portfolioId;
         this.status = status;
         this.product = product;
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
     }
 
     public Order(Side side,

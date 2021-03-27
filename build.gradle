@@ -12,9 +12,50 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+	jaxb
+}
+
+bootJar {
+	archiveBaseName = 'soap-producer-demo'
+	archiveVersion =  '0.1.0'
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src/main/java'
+			srcDir 'build/generated-sources/jaxb'
+		}
+	}
+}
+
+task genJaxb {
+	ext.sourcesDir = "build/generated-sources/jaxb"
+	ext.schema = "src/main/resources/orders.xsd"
+
+	outputs.dir sourcesDir
+
+	doLast() {
+		project.ant {
+			taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+					classpath: configurations.jaxb.asPath
+			mkdir(dir: sourcesDir)
+
+			xjc(destdir: sourcesDir, schema: schema) {
+				arg(value: "-wsdl")
+				produces(dir: sourcesDir, includes: "**/*.java")
+			}
+		}
+	}
+}
+
+compileJava.dependsOn genJaxb
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.jetbrains:annotations:20.1.0'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
@@ -22,6 +63,14 @@ dependencies {
 	//db deps
 	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
 	implementation('org.postgresql:postgresql')
+	//webflux deps
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	testImplementation 'io.projectreactor:reactor-test'
+	//soap deps
+	implementation 'wsdl4j:wsdl4j'
+	jaxb("org.glassfish.jaxb:jaxb-xjc")
+	// For Java 11:
+	implementation 'org.glassfish.jaxb:jaxb-runtime'
 }
 
 test {
