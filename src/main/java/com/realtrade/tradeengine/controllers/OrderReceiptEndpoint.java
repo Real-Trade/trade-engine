@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
@@ -19,6 +20,7 @@ import java.util.List;
 
 
 @Endpoint
+@CrossOrigin("https://rt-order-validation.herokuapp.com")
 public class OrderReceiptEndpoint {
     private static final Logger log = LoggerFactory.getLogger(OrderReceiptEndpoint.class);
     private static final String NAMESPACE_URI =
