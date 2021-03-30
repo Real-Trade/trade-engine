@@ -1,6 +1,7 @@
 package com.realtrade.tradeengine.models;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 public class Order implements Cloneable{
 
@@ -8,48 +9,52 @@ public class Order implements Cloneable{
     private Side side;
     private int quantity;
     private double price;
-    private int clientId;
-    private int portfolioId;
+    private Client client;
+    private Portfolio portfolio;
+    private int cumulativeQuantity;
+    private String exchangeOrderId;
     private Status status;
     private Product product;
     private String exchangeName;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 
     public Order() {
 
     }
 
     public Order(int orderId,
-                    Side side,
-                    int quantity,
-                    double price,
-                    int clientId,
-                    int portfolioId,
-                    Status status,
-                    Product product) {
+                 Side side,
+                 int quantity,
+                 double price,
+                 Client client,
+                 Portfolio portfolio,
+                 int cumulativeQuantity, Status status,
+                 Product product) {
         this.orderId = orderId;
         this.side = side;
         this.quantity = quantity;
         this.price = price;
-        this.clientId = clientId;
-        this.portfolioId = portfolioId;
+        this.client = client;
+        this.portfolio = portfolio;
+        this.cumulativeQuantity = cumulativeQuantity;
         this.status = status;
         this.product = product;
     }
 
     public Order(Side side,
-                    int quantity,
-                    double price,
-                    int clientId,
-                    int portfolioId,
-                    Status status,
-                    Product product) {
+                 int quantity,
+                 double price,
+                 Client client,
+                 Portfolio portfolio,
+                 int cumulativeQuantity, Status status,
+                 Product product) {
         this.side = side;
         this.quantity = quantity;
         this.price = price;
-        this.clientId = clientId;
-        this.portfolioId = portfolioId;
+        this.client = client;
+        this.portfolio = portfolio;
+        this.cumulativeQuantity = cumulativeQuantity;
         this.status = status;
         this.product = product;
     }
@@ -70,20 +75,20 @@ public class Order implements Cloneable{
         this.status = status;
     }
 
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
-    public void setPortfolioId(int portfolioId) {
-        this.portfolioId = portfolioId;
+    public void setPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
     }
 
-    public int getPortfolioId() {
-        return portfolioId;
+    public Portfolio getPortfolio() {
+        return portfolio;
     }
 
-    public int getClientId() {
-        return clientId;
+    public Client getClientId() {
+        return client;
     }
 
     public double getPrice() {
@@ -125,26 +130,30 @@ public class Order implements Cloneable{
                 ", side=" + side +
                 ", quantity=" + quantity +
                 ", price=" + price +
-                ", clientId=" + clientId +
-                ", portfolioId=" + portfolioId +
+                ", client" + client.getClientId() +
+                ", portfolio" + portfolio.getPortfolioId() +
                 ", status=" + status +
                 ", product=" + product +
                 '}';
     }
 
-    public LocalDate getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public OffsetDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public ClientOrder getClientOrderRepresentation() {
+        return new ClientOrder(this.orderId, this.price, this.quantity, this.side.name(), this.cumulativeQuantity, this.status.name(), this.product.name(), this.exchangeName, this.portfolio, this.client);
     }
 }

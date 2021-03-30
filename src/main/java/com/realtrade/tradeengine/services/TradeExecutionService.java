@@ -5,6 +5,8 @@ import com.realtrade.tradeengine.controllers.MalExClientManager;
 import com.realtrade.tradeengine.dto.ExchangeOrderDto;
 import com.realtrade.tradeengine.dto.MarketDataDto;
 import com.realtrade.tradeengine.models.*;
+import com.realtrade.tradeengine.repositories.ClientDao;
+import com.realtrade.tradeengine.repositories.PortfolioDao;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,13 +30,17 @@ public class TradeExecutionService {
     private Subscriber<ExchangeOrderDto> malexOneSubscriber;
     private Subscriber<ExchangeOrderDto> malexTwoSubscriber;
     private Order currentOrder;
+    private PortfolioDao portfolioDao;
+    private ClientDao clientDao;
 
     @Autowired
-    public TradeExecutionService(MalExClientManager clientManager, ExchangeConnectivityClient connectivityClient) {
+    public TradeExecutionService(MalExClientManager clientManager, ExchangeConnectivityClient connectivityClient, PortfolioDao portfolioDao, ClientDao clientDao) {
         this.clientManager = clientManager;
         this.connectivityClient = connectivityClient;
         malexOneSubscriber = initSubscriber(MallonExchange.MALEX1);
         malexTwoSubscriber = initSubscriber(MallonExchange.MALEX2);
+        this.portfolioDao = portfolioDao;
+        this.clientDao = clientDao;
     }
 
     private Subscriber<ExchangeOrderDto> initSubscriber(MallonExchange exchange) {
@@ -110,8 +117,11 @@ public class TradeExecutionService {
         fetchOrderBook();
     }
 
-    public void getBestExchange(Order order) {
+    public void handleOrderSplitting() {
 
+    }
+
+    public void getBestExchange(Order order) {
         MallonExchange bestExchange = null;
         switch (order.getSide()) {
             case SELL:
@@ -120,17 +130,29 @@ public class TradeExecutionService {
                 bestExchange = new BestValueExchange(exchangeOne, exchangeTwo, order).compareSellPrices();
         }
 
+        ClientOrder clientOrder = order.getClientOrderRepresentation();
+        clientOrder.setExchangeName(bestExchange.name());
         //forward to exchange connectivity
+        connectivityClient.pushToQueue(clientOrder);
         log.info("Best exchange is: " + bestExchange.name());
     }
 
-    public void forwardToExchange(Order order) {
-        //pass list of orders to order selection
-
-    }
-
-    public void createOrderFromSoap(realtrade.tradeengine.soap_ws.Order soapOrder) {
-        log.info(soapOrder.toString());
+    public Order createOrderFromSoap(realtrade.tradeengine.soap_ws.Order soapOrder) {
+        ClientOrder order = new ClientOrder();
+        Client client = clientDao.findById(soapOrder.getClientId()).orElseThrow();
+        Portfolio portfolio = portfolioDao.findById(soapOrder.getPortfolioId()).orElseThrow();
+        order.setCreatedAt(OffsetDateTime.parse(soapOrder.getCreatedAt()));
+        order.setClient(client);
+        order.setExchangeOrderId(soapOrder.getExchangeOrderId());
+        order.setStatus(soapOrder.getStatus());
+        order.setCumulativeQuantity(soapOrder.getCumulativeQuantity());
+        order.setExchangeName(soapOrder.getExchangeName());
+        order.setPortfolio(portfolio);
+        order.setSide(soapOrder.getSide());
+        order.setPrice(soapOrder.getPrice());
+        order.setProduct(soapOrder.getProduct());
+        log.info(order.toString());
+        return order.getLocalRepresentation();
     }
 
 }

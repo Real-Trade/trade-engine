@@ -17,7 +17,7 @@ configurations {
 }
 
 bootJar {
-	archiveBaseName = 'soap-producer-demo'
+	archiveBaseName = 'trade-engine'
 	archiveVersion =  '0.1.0'
 }
 
@@ -59,6 +59,7 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation ('org.springframework.boot:spring-boot-starter-web-services')
 	//db deps
 	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
@@ -71,6 +72,8 @@ dependencies {
 	jaxb("org.glassfish.jaxb:jaxb-xjc")
 	// For Java 11:
 	implementation 'org.glassfish.jaxb:jaxb-runtime'
+	//jedis
+	implementation group: 'redis.clients', name: 'jedis', version: '3.3.0'
 }
 
 test {

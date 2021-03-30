@@ -6,14 +6,6 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="updateOrderRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="order" type="tns:order" />
-                <xs:element name="orderId" type="xs:int" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
     <xs:element name="orderResponse">
         <xs:complexType>
             <xs:sequence>
@@ -23,25 +15,21 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="cancelOrderRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="orderId" type="tns:order" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
     <xs:complexType name="order">
         <xs:sequence>
             <xs:element name="orderId" type="xs:int" />
             <xs:element name="price" type="xs:double" />
             <xs:element name="quantity" type="xs:int"/>
             <xs:element name="side" type="xs:string"/>
+            <xs:element name="status" type="xs:string"/>
             <xs:element name="clientId" type="xs:int"/>
+            <xs:element name="cumulativeQuantity" type="xs:int"/>
             <xs:element name="product" type="xs:string"/>
-            <xs:element name="exchangeOrderId" type="xs:int"/>
+            <xs:element name="exchangeOrderId" type="xs:string"/>
             <xs:element name="exchangeName" type="xs:string"/>
             <xs:element name="createdAt" type="xs:string"/>
             <xs:element name="updatedAt" type="xs:string"/>
+            <xs:element name="portfolioId" type="xs:int" />
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

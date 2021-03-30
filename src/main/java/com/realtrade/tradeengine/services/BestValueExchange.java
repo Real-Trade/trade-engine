@@ -17,6 +17,7 @@ public class BestValueExchange {
         private List<Double> exchange1;
         private List<Double> exchange2;
         private Order currentClientOrder;
+        private boolean requireSplit;
 
         public BestValueExchange() {}
 
@@ -33,7 +34,4 @@ public class BestValueExchange {
         public MallonExchange compareBuyPrices() {
                 return (exchange1.get(0) > exchange2.get(0)) ? MallonExchange.MALEX1 : MallonExchange.MALEX2;
         }
-
-        //checkMarketTrend
-        //hold for increasing or decreasing
 }
