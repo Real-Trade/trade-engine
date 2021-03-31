@@ -42,11 +42,11 @@ public class ExchangeConnectivityClient {
     }
 
     public boolean pushToQueue(ClientOrder order) {
-        try(Jedis jedis = RedisPoolConfig.getJedisPool().getResource()) {
+        try(Jedis jedis = RedisPoolConfig.getPool().getResource()) {
             jedis.rpush("trade-order-queue", order.toString());
-            log.debug("Message Pushed");
+            log.warn("Message Pushed");
         } catch (Exception e) {
-            log.info("jedis push failed: "+ e.getMessage());
+            log.info("jedis push failed: "+ e);
         }
         return true;
     }

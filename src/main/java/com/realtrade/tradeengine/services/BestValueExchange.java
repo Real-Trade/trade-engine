@@ -28,10 +28,12 @@ public class BestValueExchange {
         }
 
         public MallonExchange compareSellPrices() {
+                if(exchange2.size() == 0) return MallonExchange.MALEX1;
                 return (exchange1.get(0) < exchange2.get(0)) ? MallonExchange.MALEX1 : MallonExchange.MALEX2;
         }
 
         public MallonExchange compareBuyPrices() {
+                if(exchange2.size() == 0) return MallonExchange.MALEX1;
                 return (exchange1.get(0) > exchange2.get(0)) ? MallonExchange.MALEX1 : MallonExchange.MALEX2;
         }
 }

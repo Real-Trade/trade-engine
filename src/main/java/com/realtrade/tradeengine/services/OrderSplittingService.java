@@ -4,11 +4,14 @@ import com.realtrade.tradeengine.dto.ExchangeOrderDto;
 import com.realtrade.tradeengine.models.ClientOrder;
 import com.realtrade.tradeengine.models.MallonExchange;
 import com.realtrade.tradeengine.models.Order;
+import com.realtrade.tradeengine.models.Side;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class OrderSplittingService {
@@ -26,10 +29,13 @@ public class OrderSplittingService {
     }
 
     public List<ClientOrder> getOrderSplitting() {
-        List<ExchangeOrderDto> totalExchangeOrders = exchange1.subList(0, exchange1.size());
-        totalExchangeOrders.addAll(exchange2.subList(0, exchange2.size()));
-        totalExchangeOrders.sort(Comparator.comparingDouble(ExchangeOrderDto::getPrice));
+        List<ExchangeOrderDto> totalExchangeOrders = Stream.of(exchange1, exchange2).flatMap(Collection::stream)
+                .sorted(currentClientOrder.getSide() == Side.BUY ? Comparator.comparingDouble(ExchangeOrderDto::getPrice)
+                        : Comparator.comparingDouble(ExchangeOrderDto::getPrice).reversed()).collect(Collectors.toList());
 
+        log.warn("Length of exchange 1: " + exchange1.size());
+        log.warn("Length of exchange 2: " + exchange2.size());
+        log.warn("Length of total exchanges: " + totalExchangeOrders.size());
         Map<MallonExchange, Integer> matchingOrders = new HashMap<>();
         int cumulativeQuantity = 0;
         int currentOrderIndex = 0;
@@ -40,7 +46,8 @@ public class OrderSplittingService {
            cumulativeQuantity += availableQuantity;
            MallonExchange targetExchange = exchange1.contains(currentBest) ? MallonExchange.MALEX1 : MallonExchange.MALEX2;
             matchingOrders.computeIfPresent( targetExchange, (key, val) -> val + availableQuantity);
-            matchingOrders.computeIfAbsent(targetExchange, k -> currentBest.getQuantity());
+            matchingOrders.computeIfAbsent(targetExchange, k -> availableQuantity);
+            currentOrderIndex++;
         }
         return createSubOrders(matchingOrders);
     }

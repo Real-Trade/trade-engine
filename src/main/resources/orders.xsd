@@ -23,13 +23,12 @@
             <xs:element name="side" type="xs:string"/>
             <xs:element name="status" type="xs:string"/>
             <xs:element name="clientId" type="xs:int"/>
-            <xs:element name="cumulativeQuantity" type="xs:int"/>
             <xs:element name="product" type="xs:string"/>
-            <xs:element name="exchangeOrderId" type="xs:string"/>
-            <xs:element name="exchangeName" type="xs:string"/>
-            <xs:element name="createdAt" type="xs:string"/>
-            <xs:element name="updatedAt" type="xs:string"/>
-            <xs:element name="portfolioId" type="xs:int" />
+            <xs:element name="exchangeOrderId" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="exchangeName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="createdAt" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="updatedAt" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="portfolioId" type="xs:int" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

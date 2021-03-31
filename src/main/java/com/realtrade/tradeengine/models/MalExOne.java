@@ -7,7 +7,7 @@ public class MalExOne extends Exchange {
 
     private MalExOne() {
         super("Mallon Exchange One", MallonExchange.MALEX1,
-                "http://exchange.matraining.com/",List.of("MSFT",
+                "https://exchange.matraining.com/",List.of("MSFT",
                     "NFLX", "GOOGL", "AAPL", "TSLA", "IBM", "ORCL", "AMZN"
                 ) );
     }

@@ -6,7 +6,6 @@ import com.realtrade.tradeengine.services.TradeExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -14,13 +13,9 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 import realtrade.tradeengine.soap_ws.CreateOrderRequest;
 import realtrade.tradeengine.soap_ws.OrderResponse;
-import redis.clients.jedis.Jedis;
-
-import java.util.List;
-
 
 @Endpoint
-@CrossOrigin("https://rt-order-validation.herokuapp.com")
+@CrossOrigin("*")
 public class OrderReceiptEndpoint {
     private static final Logger log = LoggerFactory.getLogger(OrderReceiptEndpoint.class);
     private static final String NAMESPACE_URI =

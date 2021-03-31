@@ -57,7 +57,7 @@ public class TradeExecutionService {
 
             @Override
             public void onNext(ExchangeOrderDto exchangeOrderDto) {
-                log.info("received new exchange order: ");
+                log.info("Fetching next exchange order...");
                 if (currentExchange == MallonExchange.MALEX1) {
                     exchangeOne.add(exchangeOrderDto);
                 } else {
@@ -68,16 +68,14 @@ public class TradeExecutionService {
 
             @Override
             public void onError(Throwable t) {
-
+                log.error(t.toString());
             }
 
             @Override
             public void onComplete() {
-                if (currentExchange == MallonExchange.MALEX1) return;
-                log.info(exchangeOne.stream().map(ExchangeOrderDto::toString).collect(Collectors.joining()));
-                log.info(exchangeTwo.stream().map(ExchangeOrderDto::toString).collect(Collectors.joining()));
-                log.info(exchangeOne.get(0).toString());
-                getBestExchange(currentOrder);
+//                if (currentExchange == MallonExchange.MALEX1) return;
+                log.info("Orderbook 1 size: "+ exchangeOne.size());
+                getBestExchange();
             }
         };
     }
@@ -94,18 +92,18 @@ public class TradeExecutionService {
                 clientManager.getSellOrders(product, MallonExchange.MALEX1)
                         .sort(Comparator.comparingDouble(ExchangeOrderDto::getPrice))
                         .subscribe(malexOneSubscriber);
-                clientManager.getSellOrders(product, MallonExchange.MALEX2)
-                        .sort(Comparator.comparingDouble(ExchangeOrderDto::getPrice))
-                        .subscribe(malexTwoSubscriber);
+//                clientManager.getSellOrders(product, MallonExchange.MALEX2)
+//                        .sort(Comparator.comparingDouble(ExchangeOrderDto::getPrice))
+//                        .subscribe(malexTwoSubscriber);
                 break;
             case SELL:
                 log.info("client selling order...");
                 clientManager.getBuyOrders(product, MallonExchange.MALEX1)
                         .sort(Comparator.comparingDouble(ExchangeOrderDto::getPrice))
                         .subscribe(malexOneSubscriber);
-                clientManager.getBuyOrders(product, MallonExchange.MALEX2)
-                        .sort(Comparator.comparingDouble(ExchangeOrderDto::getPrice).reversed())
-                        .subscribe(malexTwoSubscriber);
+//                clientManager.getBuyOrders(product, MallonExchange.MALEX2)
+//                        .sort(Comparator.comparingDouble(ExchangeOrderDto::getPrice).reversed())
+//                        .subscribe(malexTwoSubscriber);
                 break;
             default:
                 log.debug("Unknown order");
@@ -114,27 +112,29 @@ public class TradeExecutionService {
 
     public void handleClientOrder(Order order) {
         this.currentOrder = order;
+        log.info("Fetching order books");
         fetchOrderBook();
     }
 
     public void handleOrderSplitting() {
-
+        List<ClientOrder> orders = new OrderSplittingService(exchangeOne, exchangeTwo, currentOrder).getOrderSplitting();
     }
 
-    public void getBestExchange(Order order) {
+    public void getBestExchange() {
         MallonExchange bestExchange = null;
-        switch (order.getSide()) {
+        switch (currentOrder.getSide()) {
             case SELL:
-                bestExchange = new BestValueExchange(exchangeOne, exchangeTwo, order).compareBuyPrices();
+                bestExchange = new BestValueExchange(exchangeOne, exchangeTwo, currentOrder).compareBuyPrices();
             case BUY:
-                bestExchange = new BestValueExchange(exchangeOne, exchangeTwo, order).compareSellPrices();
+                bestExchange = new BestValueExchange(exchangeOne, exchangeTwo, currentOrder).compareSellPrices();
         }
 
-        ClientOrder clientOrder = order.getClientOrderRepresentation();
+        ClientOrder clientOrder = currentOrder.getClientOrderRepresentation();
         clientOrder.setExchangeName(bestExchange.name());
         //forward to exchange connectivity
-        connectivityClient.pushToQueue(clientOrder);
         log.info("Best exchange is: " + bestExchange.name());
+        List<ClientOrder> orders = new OrderSplittingService(exchangeOne, exchangeTwo, currentOrder).getOrderSplitting();
+        connectivityClient.pushToQueue(clientOrder);
     }
 
     public Order createOrderFromSoap(realtrade.tradeengine.soap_ws.Order soapOrder) {
@@ -148,6 +148,7 @@ public class TradeExecutionService {
         order.setCumulativeQuantity(soapOrder.getCumulativeQuantity());
         order.setExchangeName(soapOrder.getExchangeName());
         order.setPortfolio(portfolio);
+        order.setQuantity(soapOrder.getQuantity());
         order.setSide(soapOrder.getSide());
         order.setPrice(soapOrder.getPrice());
         order.setProduct(soapOrder.getProduct());

@@ -172,20 +172,20 @@ public class ClientOrder {
 
     @Override
     public String toString() {
-        return "ClientOrder{" +
-                "orderId=" + orderId +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                ", side='" + side + '\'' +
-                ", client=" + client +
-                ", cumulativeQuantity=" + cumulativeQuantity +
-                ", status='" + status + '\'' +
-                ", product='" + product + '\'' +
-                ", exchangeOrderId='" + exchangeOrderId + '\'' +
-                ", exchangeName='" + exchangeName + '\'' +
-                ", updatedAt=" + updatedAt +
-                ", createdAt=" + createdAt +
-                ", portfolio=" + portfolio +
+        return "{" +
+                "orderId:" + orderId +
+                ", price:" + price +
+                ", quantity:" + quantity +
+                ", side:'" + side + '\'' +
+                ", client:" + client +
+                ", cumulativeQuantity:" + cumulativeQuantity +
+                ", status:'" + status + '\'' +
+                ", product:'" + product + '\'' +
+                ", exchangeOrderId:'" + exchangeOrderId + '\'' +
+                ", exchangeName:'" + exchangeName + '\'' +
+                ", updatedAt:" + updatedAt +
+                ", createdAt:" + createdAt +
+                ", portfolio:" + portfolio +
                 '}';
     }
 }
