@@ -19,6 +19,17 @@ import reactor.netty.http.client.HttpClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.net.URI;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
@@ -42,13 +53,19 @@ public class ExchangeConnectivityClient {
     }
 
     public boolean pushToQueue(ClientOrder order) {
-        try(Jedis jedis = RedisPoolConfig.getPool().getResource()) {
+
+        try(Jedis jedis = RedisPoolConfig.getJedis()) {
             jedis.rpush("trade-order-queue", order.toString());
             log.warn("Message Pushed");
         } catch (Exception e) {
             log.info("jedis push failed: "+ e);
         }
         return true;
+    }
+
+    public Mono<String> forwardToExchange(ClientOrder order) {
+        return exchangeClient.post().uri("").body(Mono.just(order), ClientOrder.class)
+                .exchangeToMono(response -> response.bodyToMono(String.class));
     }
 
 }

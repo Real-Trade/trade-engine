@@ -68,7 +68,7 @@ public class TradeExecutionService {
 
             @Override
             public void onError(Throwable t) {
-                log.error(t.toString());
+                log.error("Error fetching orderbooks: " + t.toString());
             }
 
             @Override
@@ -133,7 +133,6 @@ public class TradeExecutionService {
         clientOrder.setExchangeName(bestExchange.name());
         //forward to exchange connectivity
         log.info("Best exchange is: " + bestExchange.name());
-        List<ClientOrder> orders = new OrderSplittingService(exchangeOne, exchangeTwo, currentOrder).getOrderSplitting();
         connectivityClient.pushToQueue(clientOrder);
     }
 
